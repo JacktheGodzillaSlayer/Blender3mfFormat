@@ -3,7 +3,7 @@ name: Package Blender 3MF Addon
 on:
   push:
     tags:
-      - 'v*'  # Trigger on version tags like v1.0.2
+      - 'release_v*'  # Trigger on release tags like release_v1.2.1
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
@@ -17,9 +17,9 @@ jobs:
     - name: Extract version from tag
       id: version
       run: |
-        if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-          # Extract version from tag (remove 'v' prefix)
-          VERSION=${GITHUB_REF#refs/tags/v}
+        if [[ "${{ github.ref }}" == refs/tags/release_v* ]]; then
+          # Extract version from release tag (remove 'release_v' prefix)
+          VERSION=${GITHUB_REF#refs/tags/release_v}
         else
           # Fallback to version from __init__.py
           VERSION=$(python3 -c "import sys; sys.path.append('io_mesh_3mf'); from __init__ import bl_info; print(f\"{bl_info['version'][0]}.{bl_info['version'][1]}.{bl_info['version'][2]}\")")
@@ -44,8 +44,8 @@ jobs:
         name: Blender3mfFormat-${{ steps.version.outputs.version }}
         path: Blender3mfFormat-${{ steps.version.outputs.version }}.zip
         
-    - name: Create Release (if triggered by tag)
-      if: startsWith(github.ref, 'refs/tags/')
+    - name: Create Release (if triggered by release tag)
+      if: startsWith(github.ref, 'refs/tags/release_v')
       uses: softprops/action-gh-release@v1
       with:
         files: Blender3mfFormat-${{ steps.version.outputs.version }}.zip
