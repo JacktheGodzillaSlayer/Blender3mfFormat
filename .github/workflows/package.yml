@@ -27,16 +27,9 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Package name: Blender3mfFormat-$VERSION"
         
-    - name: Create package directory structure
-      run: |
-        PACKAGE_NAME="Blender3mfFormat-${{ steps.version.outputs.version }}"
-        mkdir -p "$PACKAGE_NAME"
-        cp -r io_mesh_3mf "$PACKAGE_NAME/"
-        
     - name: Create zip package
       run: |
-        PACKAGE_NAME="Blender3mfFormat-${{ steps.version.outputs.version }}"
-        zip -r "Blender3mfFormat-${{ steps.version.outputs.version }}.zip" "$PACKAGE_NAME"
+        zip -r "Blender3mfFormat-${{ steps.version.outputs.version }}.zip" io_mesh_3mf/
         
     - name: Upload package as artifact
       uses: actions/upload-artifact@v4
